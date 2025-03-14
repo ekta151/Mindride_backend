@@ -7,6 +7,7 @@ const stressQuestionsRouter = require('./routes/stressQuestions.js');
 const userResponsesRouter = require('./routes/userResponses');
 const musicRoutes = require('./routes/musicRoutes');
 const bookRoutes = require('./routes/bookRoutes');
+const geetaRoutes = require('./routes/geetaRoutes');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,6 +20,7 @@ app.use('/api/stress-questions', stressQuestionsRouter);
 app.use('/api/user-responses', userResponsesRouter);
 app.use('/api/music', musicRoutes);
 app.use('/api/books', bookRoutes);
+app.use('/api', geetaRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
