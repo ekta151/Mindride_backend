@@ -51,13 +51,23 @@ async function calculateAndStoreStressLevel(userId) {
                 END AS stress_percentage,
                 NOW()
             FROM CalculatedStress
-            RETURNING stress_percentage; -- Return the calculated percentage
+            RETURNING stress_percentage, (SELECT total_weightage FROM CalculatedStress) as total_weightage, (SELECT max_possible_weightage FROM CalculatedStress) as max_possible_weightage; -- Return intermediate values for logging
         `;
 
         const result = await pool.query(query, [userId]);
-        const stressPercentage = result.rows[0]?.stress_percentage || 0; // Extract percentage from result
+        const stressPercentage = result.rows[0]?.stress_percentage || 0;
+        const totalWeightage = result.rows[0]?.total_weightage || 0; // Extract total_weightage from result
+        const maxPossibleWeightage = result.rows[0]?.max_possible_weightage || 0; // Extract max_possible_weightage
+
+        console.log("----- Stress Calculation Log -----");
+        console.log("User ID:", userId);
+        console.log("Total Weightage (from UserResponsesLastHour):", totalWeightage); // Log total_weightage
+        console.log("Max Possible Weightage (from MaxWeightagePerQuestion):", maxPossibleWeightage); // Log max_possible_weightage
+        console.log("Calculated Stress Percentage:", stressPercentage);
+        console.log("----------------------------------");
+
         console.log(`Stress level calculated and stored for user ${userId}: ${stressPercentage}%`);
-        return stressPercentage; // Return the calculated stress percentage
+        return stressPercentage;
     } catch (error) {
         console.error('Error calculating and storing stress level:', error);
         throw error; // Or handle the error as needed
